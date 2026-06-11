@@ -1,82 +1,86 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
-        <meta name="mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <link rel="stylesheet" href="css/leaflet.css">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
-        <link rel="stylesheet" href="css/L.Control.Locate.min.css">
-        <link rel="stylesheet" href="css/qgis2web.css">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css">
-        <link rel="stylesheet" href="css/leaflet.photon.css">
-        <style>
-        html, body, #map {
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="css/leaflet.css">
+    <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+    <link rel="stylesheet" href="css/L.Control.Locate.min.css">
+    <link rel="stylesheet" href="css/qgis2web.css">
+    <link rel="stylesheet" href="css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="css/leaflet.photon.css">
+    <style>
+        html,
+        body,
+        #map {
             width: 100%;
             height: 100%;
             padding: 0;
             margin: 0;
         }
-        </style>
-        <title>MATARUANG (MATARAM DALAM TATA RUANG)</title>
-    </head>
-    <body>
-        <div id="map">
-        </div>
-        <script src="js/qgis2web_expressions.js"></script>
-        <script src="js/leaflet.js"></script>
-        <script src="js/L.Control.Layers.Tree.min.js"></script>
-        <script src="js/L.Control.Locate.min.js"></script>
-        <script src="js/multi-style-layer.js"></script>
-        <script src="js/leaflet.rotatedMarker.js"></script>
-        <script src="js/leaflet.pattern.js"></script>
-        <script src="js/leaflet-hash.js"></script>
-        <script src="js/Autolinker.min.js"></script>
-        <script src="js/rbush.min.js"></script>
-        <script src="js/labelgun.min.js"></script>
-        <script src="js/labels.js"></script>
-        <script src="js/leaflet.photon.js"></script>
-        <script src="data/RTRW_KotaMataram_2.js"></script>
-        <script src="data/RDTR_Kota_Mataram__3.js"></script>
-        <script src="data/LSD_Kota_Mataram_4.js"></script>
-        <script>
+    </style>
+    <title>MATARUANG (MATARAM DALAM TATA RUANG)</title>
+</head>
+
+<body>
+    <div id="map">
+    </div>
+    <script src="js/qgis2web_expressions.js"></script>
+    <script src="js/leaflet.js"></script>
+    <script src="js/L.Control.Layers.Tree.min.js"></script>
+    <script src="js/L.Control.Locate.min.js"></script>
+    <script src="js/multi-style-layer.js"></script>
+    <script src="js/leaflet.rotatedMarker.js"></script>
+    <script src="js/leaflet.pattern.js"></script>
+    <script src="js/leaflet-hash.js"></script>
+    <script src="js/Autolinker.min.js"></script>
+    <script src="js/rbush.min.js"></script>
+    <script src="js/labelgun.min.js"></script>
+    <script src="js/labels.js"></script>
+    <script src="js/leaflet.photon.js"></script>
+    <script src="data/RTRW_KotaMataram_2.js"></script>
+    <script src="data/RDTR_Kota_Mataram__3.js"></script>
+    <script src="data/LSD_Kota_Mataram_4.js"></script>
+    <script>
         var highlightLayer;
         function highlightFeature(e) {
             highlightLayer = e.target;
 
             if (e.target.feature.geometry.type === 'LineString' || e.target.feature.geometry.type === 'MultiLineString') {
-              highlightLayer.setStyle({
-                color: 'rgba(255, 255, 0, 1.00)',
-              });
+                highlightLayer.setStyle({
+                    color: 'rgba(255, 255, 0, 1.00)',
+                });
             } else {
-              highlightLayer.setStyle({
-                fillColor: 'rgba(255, 255, 0, 1.00)',
-                fillOpacity: 1
-              });
+                highlightLayer.setStyle({
+                    fillColor: 'rgba(255, 255, 0, 1.00)',
+                    fillOpacity: 1
+                });
             }
             highlightLayer.openPopup();
         }
         var map = L.map('map', {
-            zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[-8.629275203881782,116.02781192240015],[-8.550212109356174,116.1839140962315]]);
+            zoomControl: false, maxZoom: 28, minZoom: 1
+        }).fitBounds([[-8.629275203881782, 116.02781192240015], [-8.550212109356174, 116.1839140962315]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
-        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var autolinker = new Autolinker({ truncate: { length: 30, location: 'smart' } });
         // remove popup's row if "visible-with-data"
         function removeEmptyRowsFromPopupContent(content, feature) {
-         var tempDiv = document.createElement('div');
-         tempDiv.innerHTML = content;
-         var rows = tempDiv.querySelectorAll('tr');
-         for (var i = 0; i < rows.length; i++) {
-             var td = rows[i].querySelector('td.visible-with-data');
-             var key = td ? td.id : '';
-             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
-                 rows[i].parentNode.removeChild(rows[i]);
-             }
-         }
-         return tempDiv.innerHTML;
+            var tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            var rows = tempDiv.querySelectorAll('tr');
+            for (var i = 0; i < rows.length; i++) {
+                var td = rows[i].querySelector('td.visible-with-data');
+                var key = td ? td.id : '';
+                if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                    rows[i].parentNode.removeChild(rows[i]);
+                }
+            }
+            return tempDiv.innerHTML;
         }
         // modify popup if contains media
         function addClassToPopupIfMedia(content, popup) {
@@ -87,7 +91,7 @@
                 var src = imgTd.getAttribute('src');
                 if (/\.(jpg|jpeg|png|gif|bmp|webp|avif)$/i.test(src)) {
                     popup._contentNode.classList.add('media');
-                    setTimeout(function() {
+                    setTimeout(function () {
                         popup.update();
                     }, 10);
                 } else if (/\.(mp3|wav|ogg|aac)$/i.test(src)) {
@@ -96,7 +100,7 @@
                     audio.src = src;
                     imgTd.parentNode.replaceChild(audio, imgTd);
                     popup._contentNode.classList.add('media');
-                    setTimeout(function() {
+                    setTimeout(function () {
                         popup.setContent(tempDiv.innerHTML);
                         popup.update();
                     }, 10);
@@ -111,10 +115,10 @@
                     imgTd.parentNode.replaceChild(video, imgTd);
                     popup._contentNode.classList.add('media');
                     // Aggiorna il popup quando il video carica i metadati
-                    video.addEventListener('loadedmetadata', function() {
+                    video.addEventListener('loadedmetadata', function () {
                         popup.update();
                     });
-                    setTimeout(function() {
+                    setTimeout(function () {
                         popup.setContent(tempDiv.innerHTML);
                         popup.update();
                     }, 10);
@@ -125,7 +129,7 @@
                 popup._contentNode.classList.remove('media');
             }
         }
-        var title = new L.Control({'position':'topright'});
+        var title = new L.Control({ 'position': 'topright' });
         title.onAdd = function (map) {
             this._div = L.DomUtil.create('div', 'info');
             this.update();
@@ -135,31 +139,31 @@
             this._div.innerHTML = '<h2>MATARUANG (MATARAM DALAM TATA RUANG)</h2>';
         };
         title.addTo(map);
-        var abstract = new L.Control({'position':'topright'});
+        var abstract = new L.Control({ 'position': 'topright' });
         abstract.onAdd = function (map) {
             this._div = L.DomUtil.create('div',
-            'leaflet-control abstract');
+                'leaflet-control abstract');
             this._div.id = 'abstract'
-                this._div.setAttribute("onmouseenter", "abstract.show()");
-                this._div.setAttribute("onmouseleave", "abstract.hide()");
-                this.hide();
-                return this._div;
-            };
-            abstract.hide = function () {
-                this._div.classList.remove("abstractUncollapsed");
-                this._div.classList.add("abstract");
-                this._div.innerHTML = 'i'
-            }
-            abstract.show = function () {
-                this._div.classList.remove("abstract");
-                this._div.classList.add("abstractUncollapsed");
-                this._div.innerHTML = 'MATARUANG merupakan Peta Tematik Digital berbasis WEB yang menyajikan informasi Peta Lahan Sawah Dilindungi (LSD) dan Peta Rencana Detil Tata Ruang (RDTR) secara informatif dan mudah diakses, sebagai upaya Kantor Pertanahan Kota Mataram untuk meningkatkan kualitas tata kelola melalui keterbukaan dan kemudahan informasi pertanahan. ';
+            this._div.setAttribute("onmouseenter", "abstract.show()");
+            this._div.setAttribute("onmouseleave", "abstract.hide()");
+            this.hide();
+            return this._div;
+        };
+        abstract.hide = function () {
+            this._div.classList.remove("abstractUncollapsed");
+            this._div.classList.add("abstract");
+            this._div.innerHTML = 'i'
+        }
+        abstract.show = function () {
+            this._div.classList.remove("abstract");
+            this._div.classList.add("abstractUncollapsed");
+            this._div.innerHTML = 'MATARUANG merupakan Peta Tematik Digital berbasis WEB yang menyajikan informasi Peta Lahan Sawah Dilindungi (LSD) dan Peta Rencana Detil Tata Ruang (RDTR) secara informatif dan mudah diakses, sebagai upaya Kantor Pertanahan Kota Mataram untuk meningkatkan kualitas tata kelola melalui keterbukaan dan kemudahan informasi pertanahan. ';
         };
         abstract.addTo(map);
         var zoomControl = L.control.zoom({
             position: 'topleft'
         }).addTo(map);
-        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        L.control.locate({ locateOptions: { maxZoom: 19 } }).addTo(map);
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
         }
@@ -190,7 +194,7 @@
         layer_GoogleSatellite_1;
         function pop_RTRW_KotaMataram_2(feature, layer) {
             layer.on({
-                mouseout: function(e) {
+                mouseout: function (e) {
                     for (var i in e.target._eventParents) {
                         if (typeof e.target._eventParents[i].resetStyle === 'function') {
                             e.target._eventParents[i].resetStyle(e.target);
@@ -199,7 +203,7 @@
                     if (typeof layer.closePopup == 'function') {
                         layer.closePopup();
                     } else {
-                        layer.eachLayer(function(feature){
+                        layer.eachLayer(function (feature) {
                             feature.closePopup()
                         });
                     }
@@ -213,10 +217,10 @@
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
-			layer.on('popupopen', function(e) {
-				addClassToPopupIfMedia(content, e.popup);
-			});
-			layer.bindPopup(content, { maxHeight: 400 });
+            layer.on('popupopen', function (e) {
+                addClassToPopupIfMedia(content, e.popup);
+            });
+            layer.bindPopup(content, { maxHeight: 400 });
         }
 
         function style_RTRW_KotaMataram_2_0() {
@@ -227,7 +231,7 @@
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
-                weight: 1.0, 
+                weight: 1.0,
                 fill: true,
                 fillOpacity: 1,
                 fillColor: 'rgba(247,247,247,1.0)',
@@ -249,7 +253,7 @@
         bounds_group.addLayer(layer_RTRW_KotaMataram_2);
         function pop_RDTR_Kota_Mataram__3(feature, layer) {
             layer.on({
-                mouseout: function(e) {
+                mouseout: function (e) {
                     for (var i in e.target._eventParents) {
                         if (typeof e.target._eventParents[i].resetStyle === 'function') {
                             e.target._eventParents[i].resetStyle(e.target);
@@ -258,7 +262,7 @@
                     if (typeof layer.closePopup == 'function') {
                         layer.closePopup();
                     } else {
-                        layer.eachLayer(function(feature){
+                        layer.eachLayer(function (feature) {
                             feature.closePopup()
                         });
                     }
@@ -280,10 +284,10 @@
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
-			layer.on('popupopen', function(e) {
-				addClassToPopupIfMedia(content, e.popup);
-			});
-			layer.bindPopup(content, { maxHeight: 400 });
+            layer.on('popupopen', function (e) {
+                addClassToPopupIfMedia(content, e.popup);
+            });
+            layer.bindPopup(content, { maxHeight: 400 });
         }
 
         function style_RDTR_Kota_Mataram__3_0() {
@@ -294,7 +298,7 @@
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
-                weight: 1.0, 
+                weight: 1.0,
                 fill: true,
                 fillOpacity: 1,
                 fillColor: 'rgba(247,247,247,1.0)',
@@ -316,7 +320,7 @@
         bounds_group.addLayer(layer_RDTR_Kota_Mataram__3);
         function pop_LSD_Kota_Mataram_4(feature, layer) {
             layer.on({
-                mouseout: function(e) {
+                mouseout: function (e) {
                     for (var i in e.target._eventParents) {
                         if (typeof e.target._eventParents[i].resetStyle === 'function') {
                             e.target._eventParents[i].resetStyle(e.target);
@@ -325,7 +329,7 @@
                     if (typeof layer.closePopup == 'function') {
                         layer.closePopup();
                     } else {
-                        layer.eachLayer(function(feature){
+                        layer.eachLayer(function (feature) {
                             feature.closePopup()
                         });
                     }
@@ -339,10 +343,10 @@
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
-			layer.on('popupopen', function(e) {
-				addClassToPopupIfMedia(content, e.popup);
-			});
-			layer.bindPopup(content, { maxHeight: 400 });
+            layer.on('popupopen', function (e) {
+                addClassToPopupIfMedia(content, e.popup);
+            });
+            layer.bindPopup(content, { maxHeight: 400 });
         }
 
         var pattern_LSD_Kota_Mataram_4_0 = new L.StripePattern({
@@ -404,12 +408,14 @@
             layerName: 'layer_LSD_Kota_Mataram_4',
             pane: 'pane_LSD_Kota_Mataram_4',
             onEachFeature: pop_LSD_Kota_Mataram_4,
-            styles: [style_LSD_Kota_Mataram_4_0,style_LSD_Kota_Mataram_4_1,style_LSD_Kota_Mataram_4_2,]
+            styles: [style_LSD_Kota_Mataram_4_0, style_LSD_Kota_Mataram_4_1, style_LSD_Kota_Mataram_4_2,]
         });
         bounds_group.addLayer(layer_LSD_Kota_Mataram_4);
         map.addLayer(layer_LSD_Kota_Mataram_4);
-        const url = {"Nominatim OSM": "https://nominatim.openstreetmap.org/search?format=geojson&addressdetails=1&",
-        "France BAN": "https://api-adresse.data.gouv.fr/search/?"}
+        const url = {
+            "Nominatim OSM": "https://nominatim.openstreetmap.org/search?format=geojson&addressdetails=1&",
+            "France BAN": "https://api-adresse.data.gouv.fr/search/?"
+        }
         var photonControl = L.control.photon({
             url: url["Nominatim OSM"],
             feedbackLabel: '',
@@ -418,14 +424,14 @@
             initial: true,
             // resultsHandler: myHandler,
         }).addTo(map);
-        photonControl._container.childNodes[0].style.borderRadius="10px"
+        photonControl._container.childNodes[0].style.borderRadius = "10px"
         // Create a variable to store the geoJSON data
         var x = null;
         // Create a variable to store the marker
         var marker = null;
         // Add an event listener to the Photon control to create a marker from the returned geoJSON data
         var z = null;
-        photonControl.on('selected', function(e) {
+        photonControl.on('selected', function (e) {
             console.log(photonControl.search.resultsContainer);
             if (x != null) {
                 map.removeLayer(obj3.marker);
@@ -436,14 +442,14 @@
             var label = typeof obj2.gcd.properties.label === 'undefined' ? obj2.gcd.properties.display_name : obj2.gcd.properties.label;
             obj3.marker = L.marker(x.getLayers()[0].getLatLng()).bindPopup(label).addTo(map);
             map.setView(x.getLayers()[0].getLatLng(), 17);
-            z = typeof e.choice.properties.label === 'undefined'? e.choice.properties.display_name : e.choice.properties.label;
+            z = typeof e.choice.properties.label === 'undefined' ? e.choice.properties.display_name : e.choice.properties.label;
             console.log(e);
             e.target.input.value = z;
         });
         var search = document.getElementsByClassName("leaflet-photon leaflet-control")[0];
         search.classList.add("leaflet-control-search")
         search.style.display = "flex";
-        search.style.backgroundColor="rgba(255,255,255,0.5)" 
+        search.style.backgroundColor = "rgba(255,255,255,0.5)"
 
         // Create the new button element
         var button = document.createElement("div");
@@ -462,12 +468,12 @@
             }
         });
         var overlaysTree = [
-            {label: '<img src="legend/LSD_Kota_Mataram_4.png" /> LSD_Kota_Mataram', layer: layer_LSD_Kota_Mataram_4},
-            {label: '<img src="legend/RDTR_Kota_Mataram__3.png" /> RDTR_Kota_Mataram_', layer: layer_RDTR_Kota_Mataram__3},
-            {label: '<img src="legend/RTRW_KotaMataram_2.png" /> RTRW_Kota Mataram', layer: layer_RTRW_KotaMataram_2},
-            {label: "Google Satellite", layer: layer_GoogleSatellite_1},
-            {label: "Google Road", layer: layer_GoogleRoad_0},]
-        var lay = L.control.layers.tree(null, overlaysTree,{
+            { label: '<img src="legend/LSD_Kota_Mataram_4.png" /> LSD_Kota_Mataram', layer: layer_LSD_Kota_Mataram_4 },
+            { label: '<img src="legend/RDTR_Kota_Mataram__3.png" /> RDTR_Kota_Mataram_', layer: layer_RDTR_Kota_Mataram__3 },
+            { label: '<img src="legend/RTRW_KotaMataram_2.png" /> RTRW_Kota Mataram', layer: layer_RTRW_KotaMataram_2 },
+            { label: "Google Satellite", layer: layer_GoogleSatellite_1 },
+            { label: "Google Road", layer: layer_GoogleRoad_0 },]
+        var lay = L.control.layers.tree(null, overlaysTree, {
             //namedToggle: true,
             //selectorBack: false,
             //closedSymbol: '&#8862; &#x1f5c0;',
@@ -478,6 +484,16 @@
         });
         lay.addTo(map);
         setBounds();
-        </script>        
-    </body>
+    </script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RW9V2G6L0F"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-RW9V2G6L0F');
+    </script>
+</body>
+
 </html>
